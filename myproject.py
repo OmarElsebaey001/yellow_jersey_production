@@ -4,12 +4,18 @@ from flask import make_response,Flask,render_template
 from flask import request, jsonify
 from PIL import Image
 from PIL import ImageFont
-from PIL import ImageDraw 
+from PIL import ImageDraw
+from helper import convert_and_append 
 from jinja2 import Template
 from flask import send_file
 from helper import create_image 
 import io 
 from random import randint
+import threading
+import time
+
+mutex = threading.Lock()  # is equal to threading.Semaphore(1)
+
 
 img = Image.open("l.jpeg").convert('RGB')
 app = Flask(__name__)
@@ -26,7 +32,10 @@ def show():
     wealth_manager = wealth_manager + f": {wlt_mang_num}"
     capital = int(capital)
     total = int(total)
-    full_pic = create_image(capital,total,sub_name,wealth_manager,img)
+    with mutex :
+        print("MUTEX GAINED")
+        forg_img,back_img = create_image(capital,total,sub_name,wealth_manager,img)
+    full_pic = convert_and_append(forg_img,back_img)
     buf = io.BytesIO()
     full_pic.save(buf, "JPEG", quality=100, optimize=True, progressive=True)
     del full_pic
