@@ -95,14 +95,17 @@ def create_image(capital,total,sub_name,wealth_manager,img1):
     y_ticks = [f'{i:,}' for i in y_ticks]
     sx.set(xlabel=None)
     sx.set(ylabel=None)
-    plt.xticks(fontsize=30)
+    sx.set_xticklabels(["Capital Invested","Total Proift/Loss","Total Portfolio Value"], size = 30)
     sx.set_yticklabels(y_ticks, size = 30)
     buf = io.BytesIO()
-    plt.savefig(buf, format='jpeg',dpi=170)
+    sx.figure.savefig(buf, format='jpeg',dpi=170)
     buf.seek(0)
     chart_img = Image.open(buf)
     plt.clf()
+    return chart_img,background
+
+
+def convert_and_append(chart_img,background):
     foreground  = convertImage(chart_img)
-    del chart_img 
     background.paste(foreground, (1100,2500), foreground)
     return background.resize((1024,1024))
