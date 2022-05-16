@@ -10,6 +10,17 @@ import io
 from random import randint
 import os
 import numpy as np 
+from pytz import timezone 
+from datetime import datetime
+YELLOW = "#f2e403"
+LIGHT_YELLOW = "#f2e300"
+LIGHT_GREY = "#bcbcbc"
+GREY = "#373a36"
+
+def get_ind_date():
+    ind_time = datetime.now(timezone("Asia/Kolkata")).strftime('%d/%m/%Y')
+    return ind_time
+
 
 matplotlib.pyplot.switch_backend('Agg')
 matplotlib.use('agg')
@@ -19,12 +30,19 @@ def convertImage(img):
     x[:, :, 3] = (255 * (x[:, :, :3] < 230).any(axis=2)).astype(np.uint8)
     return Image.fromarray(x)
 
-def create_image(capital,total,sub_name,wealth_manager,img1):
+def create_image(capital,total,sub_name,wealth_manager,date,img1):
     img = img1.copy()
+
     tot_cap_diff = int(total - capital)
+    
+    date_font = ImageFont.truetype(r'Nexa Light.otf', 80)
+    date_loc  = (2060,830)
+    date_col  = GREY
+
     sub_name_font = ImageFont.truetype(r'Nexa Light.otf', 100)
-    sub_name_loc  = (1700,850)
+    sub_name_loc  = (1500,950)
     sub_name_col  = (55,57,54)
+
 
     cap_inv      = "{:,}".format(capital)
     cap_inv_font = ImageFont.truetype(r'Nexa Bold.otf', 110)
@@ -52,6 +70,7 @@ def create_image(capital,total,sub_name,wealth_manager,img1):
     wlt_mang_col  = (55,57,54)
 
     draw = ImageDraw.Draw(img)
+    draw.text(date_loc,date,date_col,font=date_font)
     draw.text(sub_name_loc,sub_name,sub_name_col,font=sub_name_font)
     draw.text(cap_inv_loc,cap_inv,cap_inv_col,font=cap_inv_font)
     draw.text(tot_prt_val_loc,tot_prt_val,tot_prt_val_col,font=tot_prt_val_font)
@@ -71,12 +90,12 @@ def create_image(capital,total,sub_name,wealth_manager,img1):
 
     df = pd.DataFrame({"Price 1": first,
                     "Price 2" : second,
-                        "Day": ["Capital Invested","Total Proift/Loss","Total Portfolio Value"]})
+                        "Day": ["Capital Invested","Total Profit/Loss","Total Portfolio Value"]})
     custom_params = {"axes.spines.right": False,"axes.spines.left": False, "axes.spines.top": False,
                     'figure.figsize':(15,8),
                     "figure.autolayout": True,
                     }
-    colors = ["#25302a", "#ecfa00", "#bccbc9"]
+    colors = [GREY, LIGHT_YELLOW, LIGHT_GREY]
     palette=colors
     sns.set_theme(style="white", palette=palette,rc=custom_params);
     sx = sns.barplot(x = 'Day', y = 'Price 1', data = df)
@@ -95,7 +114,7 @@ def create_image(capital,total,sub_name,wealth_manager,img1):
     y_ticks = [f'{i:,}' for i in y_ticks]
     sx.set(xlabel=None)
     sx.set(ylabel=None)
-    sx.set_xticklabels(["Capital Invested","Total Proift/Loss","Total Portfolio Value"], size = 30)
+    sx.set_xticklabels(["Capital Invested","Total Profit/Loss","Total Portfolio Value"], size = 30)
     sx.set_yticklabels(y_ticks, size = 30)
     buf = io.BytesIO()
     sx.figure.savefig(buf, format='jpeg',dpi=170)

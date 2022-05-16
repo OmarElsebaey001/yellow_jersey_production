@@ -27,6 +27,7 @@ def show():
     sub_name       = request.args.get('cl_nm', default = 1, type = str)
     wealth_manager = request.args.get('wlt_mng', default = 1, type = str)
     wealth_number  = request.args.get('wlt_mng_nm', default = 1, type = str)
+    date           = request.args.get('date', default = 1, type = str)
 
     wlt_mang_num   = f"+{wealth_number[0:2]} {wealth_number[2:7]} {wealth_number[7:]}"
     wealth_manager = wealth_manager + f": {wlt_mang_num}"
@@ -34,7 +35,7 @@ def show():
     total = int(total)
     with mutex :
         print("MUTEX GAINED")
-        forg_img,back_img = create_image(capital,total,sub_name,wealth_manager,img)
+        forg_img,back_img = create_image(capital,total,sub_name,wealth_manager,date,img)
     full_pic = convert_and_append(forg_img,back_img)
     buf = io.BytesIO()
     full_pic.save(buf, "JPEG", quality=100, optimize=True, progressive=True)
