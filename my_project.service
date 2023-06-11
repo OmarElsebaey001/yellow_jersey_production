@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to serve myapp
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/root/production/yellow_jersey_production
+ExecStart=/usr/bin/gunicorn -w 4 -b :5001 myproject:app --access-logfile /image_access.log --error-logfile /image_error.log
+
+[Install]
+WantedBy=multi-user.target

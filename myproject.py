@@ -40,6 +40,7 @@ def show():
     buf = io.BytesIO()
     full_pic.save(buf, "JPEG", quality=100, optimize=True, progressive=True)
     buf.seek(0)
+    del full_pic,back_img 
     return send_file(buf,mimetype='image/jpeg')
 
 @app.route("/hi")
