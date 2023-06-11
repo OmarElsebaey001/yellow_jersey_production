@@ -1,5 +1,3 @@
-flask
-requests
 flask-cors
 gunicorn
 attrs==19.3.0
